@@ -1,0 +1,187 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'codex/**'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Suite to run
+        required: true
+        type: choice
+        default: regression
+        options:
+          - smoke
+          - regression
+          - env-flaky
+          - full
+  schedule:
+    - cron: '0 1 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tutorialsninja-playwright-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      suite: ${{ steps.resolve-suite.outputs.suite }}
+      report-url: ${{ steps.report-url.outputs.url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve suite
+        id: resolve-suite
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "suite=${{ inputs.suite }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "suite=full" >> "$GITHUB_OUTPUT"
+          else
+            echo "suite=smoke" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Restore Playwright browser cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke suite
+        if: steps.resolve-suite.outputs.suite == 'smoke'
+        run: npm run test:smoke
+
+      - name: Run regression suite
+        if: steps.resolve-suite.outputs.suite == 'regression'
+        run: npm run test:regression
+
+      - name: Run environment-flaky suite
+        if: steps.resolve-suite.outputs.suite == 'env-flaky'
+        run: npm run test:env-flaky
+
+      - name: Run full regression suite
+        if: steps.resolve-suite.outputs.suite == 'full'
+        run: npm run test:regression
+
+      - name: Run non-blocking environment-flaky checks
+        if: steps.resolve-suite.outputs.suite == 'full'
+        continue-on-error: true
+        run: npm run test:env-flaky
+
+      - name: Publish workflow summary
+        shell: bash
+        run: |
+          files=(test-results/json/*.json)
+          if [ -e "${files[0]}" ]; then
+            node ./scripts/workflow-summary.mjs "${files[@]}"
+          else
+            echo "## Workflow summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "No Playwright JSON results were produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Set report URL
+        id: report-url
+        shell: bash
+        run: echo "url=https://melv-narrow.github.io/tutorialsninja-playwright/" >> "$GITHUB_OUTPUT"
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            allure-results
+            playwright-report
+            test-results
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish-report:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: test-artifacts
+          path: .
+
+      - name: Restore previous Allure history
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages:gh-pages
+            git worktree add gh-pages-history gh-pages
+          fi
+
+      - name: Generate Allure report
+        env:
+          ALLURE_HISTORY_SOURCE: gh-pages-history/history
+        run: npm run report
+
+      - name: Prepare published site
+        shell: bash
+        run: |
+          cp -r allure-report/. public-site
+          touch public-site/.nojekyll
+
+      - name: Deploy GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public-site
+          publish_branch: gh-pages
+          force_orphan: false
+
+      - name: Add report links to workflow summary
+        shell: bash
+        run: |
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Allure report: https://melv-narrow.github.io/tutorialsninja-playwright/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifacts: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"

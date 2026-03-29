@@ -1,0 +1,51 @@
+{
+  "name": "tutorialsninja-playwright",
+  "version": "1.0.0",
+  "description": "Playwright + TypeScript automation showcase for the TutorialsNinja OpenCart demo.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:smoke",
+    "test:smoke": "cross-env PW_SUITE=smoke npx playwright test --project=chromium",
+    "test:regression": "cross-env PW_SUITE=regression npx playwright test --project=chromium --project=chromium-authenticated",
+    "test:env-flaky": "cross-env PW_SUITE=env-flaky npx playwright test --project=chromium --project=chromium-authenticated",
+    "test:full": "cross-env PW_SUITE=full npx playwright test --project=chromium --project=chromium-authenticated",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "report": "node ./scripts/generate-allure-report.mjs",
+    "report:open": "node ./scripts/generate-allure-report.mjs --open"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "allure",
+    "github-actions",
+    "e2e",
+    "qa-automation"
+  ],
+  "author": "Melvin",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.58.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.5.0",
+    "allure-commandline": "^2.38.1",
+    "allure-playwright": "^3.6.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "fs-extra": "^11.3.4",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "zod": "^4.3.6"
+  }
+}

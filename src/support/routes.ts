@@ -1,0 +1,16 @@
+export const ROUTES = {
+  home: 'index.php?route=common/home',
+  register: 'index.php?route=account/register',
+  login: 'index.php?route=account/login',
+  account: 'index.php?route=account/account',
+  editAccount: 'index.php?route=account/edit',
+  newsletter: 'index.php?route=account/newsletter',
+  wishlist: 'index.php?route=account/wishlist',
+  logout: 'index.php?route=account/logout',
+  search: 'index.php?route=product/search',
+  desktops: 'index.php?route=product/category&path=20',
+  compare: 'index.php?route=product/compare',
+  cart: 'index.php?route=checkout/cart',
+  checkout: 'index.php?route=checkout/checkout',
+  productMacBook: 'index.php?route=product/product&product_id=43',
+} as const;
