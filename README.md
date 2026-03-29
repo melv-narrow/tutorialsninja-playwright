@@ -27,8 +27,13 @@ Playwright + TypeScript end-to-end automation suite for the TutorialsNinja OpenC
 - Login and logout lifecycle
 - Wishlist add, reload persistence, and removal
 - Newsletter preference management
+- Profile-edit persistence for contact details
+- Address book entry creation
 - Catalog sorting and product comparison
+- Comparison cleanup back to the empty state
+- Search empty-state and description-search coverage
 - Cart quantity updates and removal
+- Direct checkout guardrail when the cart is empty
 - Protected-route redirects after logout
 - Back/refresh invalidation after logout
 - Session-expiry simulation by clearing cookies
@@ -85,6 +90,7 @@ npm run report:open
 4. GitHub Actions deploys the report to GitHub Pages.
 
 This keeps historical trend widgets meaningful over time instead of resetting on every run.
+The suite also writes `categories.json` and `environment.properties` into Allure results so the hosted report carries environment context and cleaner failure grouping.
 
 ## Visuals
 

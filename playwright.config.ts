@@ -90,6 +90,7 @@ const createBrowserProjects = (): Project[] => {
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: './src/support/global-setup.ts',
   fullyParallel: false,
   forbidOnly: env.isCI,
   retries: env.isCI ? 1 : 0,

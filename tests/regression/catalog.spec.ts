@@ -2,6 +2,7 @@ import { Severity } from 'allure-js-commons';
 import { expect, qa, test } from '../../src/fixtures/qa.js';
 import { CartPage } from '../../src/pages/cart-page.js';
 import { CategoryPage } from '../../src/pages/category-page.js';
+import { ComparePage } from '../../src/pages/compare-page.js';
 import { ROUTES } from '../../src/support/routes.js';
 
 test.describe('Catalog and cart regression coverage', () => {
@@ -92,6 +93,31 @@ test.describe('Catalog and cart regression coverage', () => {
       await expect(
         page.locator('#content').getByText('Your shopping cart is empty!'),
       ).toBeVisible();
+    },
+  );
+
+  qa(
+    'removes a product from the comparison view and returns to the empty state',
+    {
+      epic: 'Catalog',
+      feature: 'Product comparison',
+      story: 'Shoppers can clear compared products after review',
+      severity: Severity.NORMAL,
+      tags: ['@regression'],
+    },
+    async ({ page }) => {
+      const categoryPage = new CategoryPage(page);
+      const comparePage = new ComparePage(page);
+
+      await categoryPage.gotoDesktops();
+      await categoryPage.addToCompare('MacBook');
+      await expect(categoryPage.successAlert).toContainText('MacBook');
+
+      await comparePage.goto();
+      await expect(comparePage.productLink('MacBook')).toBeVisible();
+
+      await comparePage.removeProduct('MacBook');
+      await expect(comparePage.emptyState).toBeVisible();
     },
   );
 });

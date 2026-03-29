@@ -1,6 +1,8 @@
 import { Severity } from 'allure-js-commons';
 import { expect, qaAuth, test } from '../../src/fixtures/qa.js';
 import { AccountPage } from '../../src/pages/account-page.js';
+import { AddressBookPage } from '../../src/pages/address-book-page.js';
+import { EditAccountPage } from '../../src/pages/edit-account-page.js';
 import { HomePage } from '../../src/pages/home-page.js';
 import { LoginPage } from '../../src/pages/login-page.js';
 
@@ -100,6 +102,58 @@ test.describe('Authenticated account regression coverage', () => {
       await expect(accountPage.successAlert).toContainText(
         'Success: Your newsletter subscription has been successfully updated',
       );
+    },
+  );
+
+  qaAuth(
+    'persists edited account contact details after saving',
+    {
+      epic: 'Account',
+      feature: 'Profile maintenance',
+      story: 'Signed-in shoppers can update contact details',
+      severity: Severity.CRITICAL,
+      tags: ['@regression', '@auth'],
+    },
+    async ({ page }) => {
+      const accountPage = new AccountPage(page);
+      const editAccountPage = new EditAccountPage(page);
+      const updatedTelephone = `07${Date.now().toString().slice(-8)}`;
+
+      await accountPage.openEditAccount();
+      await editAccountPage.updateTelephone(updatedTelephone);
+
+      await expect(accountPage.successAlert).toContainText(
+        'Success: Your account has been successfully updated.',
+      );
+
+      await editAccountPage.goto();
+      await expect(editAccountPage.telephoneInput).toHaveValue(
+        updatedTelephone,
+      );
+    },
+  );
+
+  qaAuth(
+    'creates a new address book entry for the authenticated customer',
+    {
+      epic: 'Account',
+      feature: 'Address book',
+      story: 'Signed-in shoppers can maintain delivery addresses',
+      severity: Severity.NORMAL,
+      tags: ['@regression', '@auth'],
+    },
+    async ({ page }) => {
+      const accountPage = new AccountPage(page);
+      const addressBookPage = new AddressBookPage(page);
+      const addressSuffix = Date.now().toString().slice(-4);
+
+      await accountPage.openAddressBook();
+      await expect(addressBookPage.heading).toBeVisible();
+      await addressBookPage.openNewAddressForm();
+      await addressBookPage.createAddress(addressSuffix);
+
+      await expect(addressBookPage.heading).toBeVisible();
+      await expect(addressBookPage.addressEntry(addressSuffix)).toBeVisible();
     },
   );
 });

@@ -30,6 +30,10 @@ export class AccountPage {
     await this.page.goto(ROUTES.editAccount);
   }
 
+  async openAddressBook(): Promise<void> {
+    await this.page.goto('index.php?route=account/address');
+  }
+
   async logout(): Promise<void> {
     await this.page.goto(ROUTES.account);
     await this.page
