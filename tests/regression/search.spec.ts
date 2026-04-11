@@ -1,6 +1,7 @@
 import { Severity } from 'allure-js-commons';
 import { expect, qa, test } from '../../src/fixtures/qa.js';
 import { SearchPage } from '../../src/pages/search-page.js';
+import { PRODUCTS, SEARCH_TERMS } from '../../src/support/test-data.js';
 
 test.describe('Search regression coverage', () => {
   qa(
@@ -16,7 +17,7 @@ test.describe('Search regression coverage', () => {
       const searchPage = new SearchPage(page);
 
       await searchPage.goto();
-      await searchPage.search('');
+      await searchPage.search(SEARCH_TERMS.NO_RESULTS);
 
       await expect(searchPage.noResultsMessage).toBeVisible();
     },
@@ -35,16 +36,16 @@ test.describe('Search regression coverage', () => {
       const searchPage = new SearchPage(page);
 
       await searchPage.goto();
-      await searchPage.search('macbook', { includeDescription: true });
+      await searchPage.search(SEARCH_TERMS.MACBOOK_LOWERCASE, { includeDescription: true });
 
       await expect(page).toHaveURL(/description=true/);
       await expect(
         page
-          .getByRole('link', { name: 'Apple Cinema 30"', exact: true })
+          .getByRole('link', { name: PRODUCTS.APPLE_CINEMA, exact: true })
           .first(),
       ).toBeVisible();
       await expect(
-        page.getByRole('link', { name: 'MacBook Pro', exact: true }).first(),
+        page.getByRole('link', { name: PRODUCTS.MACBOOK_PRO, exact: true }).first(),
       ).toBeVisible();
     },
   );

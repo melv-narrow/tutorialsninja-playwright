@@ -2,6 +2,7 @@ import { Severity } from 'allure-js-commons';
 import { expect, qa, test } from '../../src/fixtures/qa.js';
 import { HomePage } from '../../src/pages/home-page.js';
 import { ROUTES } from '../../src/support/routes.js';
+import { PRODUCTS, SEARCH_TERMS } from '../../src/support/test-data.js';
 
 test.describe('Storefront smoke coverage', () => {
   qa(
@@ -50,14 +51,14 @@ test.describe('Storefront smoke coverage', () => {
       const homePage = new HomePage(page);
 
       await homePage.goto();
-      await homePage.searchFor('MacBook');
+      await homePage.searchFor(SEARCH_TERMS.MACBOOK);
 
       await expect(page).toHaveURL(/route=product\/search/);
       await expect(
         page.getByRole('heading', { name: /Search - MacBook/i }),
       ).toBeVisible();
       await expect(
-        page.getByRole('link', { name: 'MacBook', exact: true }).first(),
+        page.getByRole('link', { name: PRODUCTS.MACBOOK, exact: true }).first(),
       ).toBeVisible();
     },
   );

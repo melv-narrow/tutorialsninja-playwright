@@ -4,8 +4,16 @@ import { CartPage } from '../../src/pages/cart-page.js';
 import { CategoryPage } from '../../src/pages/category-page.js';
 import { ComparePage } from '../../src/pages/compare-page.js';
 import { ROUTES } from '../../src/support/routes.js';
+import { PRODUCTS } from '../../src/support/test-data.js';
 
 test.describe('Catalog and cart regression coverage', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure clean state by clearing cookies/storage before each test
+    // This forces a new session on the demo site, preventing state leakage between tests
+    await page.context().clearCookies();
+    await page.context().clearPermissions();
+  });
+
   qa(
     'sorts the desktop catalog by highest price first',
     {
@@ -41,11 +49,11 @@ test.describe('Catalog and cart regression coverage', () => {
       const categoryPage = new CategoryPage(page);
 
       await categoryPage.gotoDesktops();
-      await categoryPage.addToCompare('MacBook');
-      await expect(categoryPage.successAlert).toContainText('MacBook');
+      await categoryPage.addToCompare(PRODUCTS.MACBOOK);
+      await expect(categoryPage.successAlert).toContainText(PRODUCTS.MACBOOK);
 
-      await categoryPage.addToCompare('iPhone');
-      await expect(categoryPage.successAlert).toContainText('iPhone');
+      await categoryPage.addToCompare(PRODUCTS.IPHONE);
+      await expect(categoryPage.successAlert).toContainText(PRODUCTS.IPHONE);
 
       await page.goto(ROUTES.compare);
 
@@ -53,10 +61,10 @@ test.describe('Catalog and cart regression coverage', () => {
         page.getByRole('heading', { name: 'Product Comparison' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('link', { name: 'MacBook', exact: true }).first(),
+        page.getByRole('link', { name: PRODUCTS.MACBOOK, exact: true }).first(),
       ).toBeVisible();
       await expect(
-        page.getByRole('link', { name: 'iPhone', exact: true }).first(),
+        page.getByRole('link', { name: PRODUCTS.IPHONE, exact: true }).first(),
       ).toBeVisible();
     },
   );
@@ -75,21 +83,21 @@ test.describe('Catalog and cart regression coverage', () => {
       const cartPage = new CartPage(page);
 
       await categoryPage.gotoDesktops();
-      await categoryPage.addToCart('MacBook');
+      await categoryPage.addToCart(PRODUCTS.MACBOOK);
       await expect(categoryPage.successAlert).toContainText(
-        'Success: You have added MacBook',
+        `Success: You have added ${PRODUCTS.MACBOOK}`,
       );
 
       await cartPage.goto();
-      await cartPage.updateQuantity('MacBook', 2);
+      await cartPage.updateQuantity(PRODUCTS.MACBOOK, 2);
       await expect(cartPage.successAlert).toContainText(
         'Success: You have modified your shopping cart',
       );
       await expect(
-        cartPage.cartRow('MacBook').locator('input[name*="quantity"]'),
+        cartPage.cartRow(PRODUCTS.MACBOOK).locator('input[name*="quantity"]'),
       ).toHaveValue('2');
 
-      await cartPage.removeProduct('MacBook');
+      await cartPage.removeProduct(PRODUCTS.MACBOOK);
       await expect(
         page.locator('#content').getByText('Your shopping cart is empty!'),
       ).toBeVisible();
@@ -110,13 +118,13 @@ test.describe('Catalog and cart regression coverage', () => {
       const comparePage = new ComparePage(page);
 
       await categoryPage.gotoDesktops();
-      await categoryPage.addToCompare('MacBook');
-      await expect(categoryPage.successAlert).toContainText('MacBook');
+      await categoryPage.addToCompare(PRODUCTS.MACBOOK);
+      await expect(categoryPage.successAlert).toContainText(PRODUCTS.MACBOOK);
 
       await comparePage.goto();
-      await expect(comparePage.productLink('MacBook')).toBeVisible();
+      await expect(comparePage.productLink(PRODUCTS.MACBOOK)).toBeVisible();
 
-      await comparePage.removeProduct('MacBook');
+      await comparePage.removeProduct(PRODUCTS.MACBOOK);
       await expect(comparePage.emptyState).toBeVisible();
     },
   );

@@ -5,6 +5,7 @@ import { AddressBookPage } from '../../src/pages/address-book-page.js';
 import { EditAccountPage } from '../../src/pages/edit-account-page.js';
 import { HomePage } from '../../src/pages/home-page.js';
 import { LoginPage } from '../../src/pages/login-page.js';
+import { PRODUCTS } from '../../src/support/test-data.js';
 
 test.describe('Authenticated account regression coverage', () => {
   test.beforeEach(async ({ page, authUser }) => {
@@ -60,19 +61,19 @@ test.describe('Authenticated account regression coverage', () => {
       await accountPage.goto();
       await expect(accountPage.accountHeading).toBeVisible();
       await homePage.goto();
-      await homePage.addFeaturedProductToWishlist('MacBook');
+      await homePage.addFeaturedProductToWishlist(PRODUCTS.MACBOOK);
       await expect(homePage.successAlert).toContainText(
-        'Success: You have added MacBook',
+        `Success: You have added ${PRODUCTS.MACBOOK}`,
       );
 
       await accountPage.openWishlist();
-      await expect(accountPage.wishlistRow('MacBook')).toBeVisible();
+      await expect(accountPage.wishlistRow(PRODUCTS.MACBOOK)).toBeVisible();
 
       await page.reload();
-      await expect(accountPage.wishlistRow('MacBook')).toBeVisible();
+      await expect(accountPage.wishlistRow(PRODUCTS.MACBOOK)).toBeVisible();
 
       await accountPage
-        .wishlistRow('MacBook')
+        .wishlistRow(PRODUCTS.MACBOOK)
         .locator('a[data-original-title="Remove"]')
         .click();
       await expect(accountPage.successAlert).toContainText(

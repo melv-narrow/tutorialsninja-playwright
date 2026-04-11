@@ -2,8 +2,14 @@ import { Severity } from 'allure-js-commons';
 import { expect, qa, test } from '../../src/fixtures/qa.js';
 import { CartPage } from '../../src/pages/cart-page.js';
 import { HomePage } from '../../src/pages/home-page.js';
+import { PRODUCTS } from '../../src/support/test-data.js';
 
 test.describe('Shopping smoke coverage', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure clean state by clearing cookies/storage before each test
+    await page.context().clearCookies();
+  });
+
   qa(
     'adds a featured product to the cart through the happy path',
     {
@@ -18,13 +24,13 @@ test.describe('Shopping smoke coverage', () => {
       const cartPage = new CartPage(page);
 
       await homePage.goto();
-      await homePage.addFeaturedProductToCart('MacBook');
+      await homePage.addFeaturedProductToCart(PRODUCTS.MACBOOK);
 
       await expect(homePage.successAlert).toContainText(
-        'Success: You have added MacBook',
+        `Success: You have added ${PRODUCTS.MACBOOK}`,
       );
       await cartPage.goto();
-      await expect(cartPage.cartRow('MacBook')).toBeVisible();
+      await expect(cartPage.cartRow(PRODUCTS.MACBOOK)).toBeVisible();
     },
   );
 

@@ -1,6 +1,7 @@
 import { Severity } from 'allure-js-commons';
 import { expect, qa, test } from '../../src/fixtures/qa.js';
 import { HomePage } from '../../src/pages/home-page.js';
+import { CURRENCIES, PRODUCTS } from '../../src/support/test-data.js';
 
 test.describe('Environment-sensitive live demo checks', () => {
   qa(
@@ -18,9 +19,9 @@ test.describe('Environment-sensitive live demo checks', () => {
       const homePage = new HomePage(page);
 
       await homePage.goto();
-      await homePage.switchCurrency('€Euro');
+      await homePage.switchCurrency(CURRENCIES.EURO);
 
-      await expect(homePage.productCard('MacBook')).toContainText('€');
+      await expect(homePage.productCard(PRODUCTS.MACBOOK)).toContainText(CURRENCIES.EURO_SYMBOL);
     },
   );
 });
