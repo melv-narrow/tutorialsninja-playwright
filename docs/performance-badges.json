@@ -1,0 +1,14 @@
+{
+  "ttfb": {
+    "value": 627,
+    "color": "brightgreen"
+  },
+  "lcp": {
+    "value": 1480,
+    "color": "brightgreen"
+  },
+  "tests": {
+    "value": 3,
+    "color": "blue"
+  }
+}

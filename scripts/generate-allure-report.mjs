@@ -40,6 +40,22 @@ const ensureJavaAvailable = () => {
   );
 };
 
+const generateAllureMetadata = () => {
+  const result = spawnSync(
+    'node',
+    [path.join(rootDir, 'scripts', 'generate-allure-metadata.mjs')],
+    {
+      cwd: rootDir,
+      stdio: 'inherit',
+      shell: false,
+    },
+  );
+
+  if (result.status !== 0) {
+    console.warn('Warning: Failed to generate Allure metadata');
+  }
+};
+
 const runAllure = (commandArgs) => {
   const result = spawnSync(
     process.platform === 'win32' ? 'npx.cmd' : 'npx',
@@ -58,6 +74,7 @@ const runAllure = (commandArgs) => {
 
 await ensureHistory();
 ensureJavaAvailable();
+generateAllureMetadata();
 
 runAllure(['generate', allureResultsDir, '--clean', '-o', allureReportDir]);
 

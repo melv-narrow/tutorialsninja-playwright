@@ -1,4 +1,4 @@
-[![CI](https://github.com/melv-narrow/tutorialsninja-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/melv-narrow/tutorialsninja-playwright/actions/workflows/ci.yml) [![Allure Report](https://img.shields.io/badge/Allure-Report-orange?logo=allure&logoColor=white)](https://melv-narrow.github.io/tutorialsninja-playwright/)
+[![CI](https://github.com/melv-narrow/tutorialsninja-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/melv-narrow/tutorialsninja-playwright/actions/workflows/ci.yml) [![Allure Report](https://img.shields.io/badge/Allure-Report-orange?logo=allure&logoColor=white)](https://melv-narrow.github.io/tutorialsninja-playwright/) ![TTFB](https://img.shields.io/badge/TTFB-627ms-brightgreen) ![LCP](https://img.shields.io/badge/LCP-1480ms-brightgreen) ![Performance Tests](https://img.shields.io/badge/Performance%20Tests-3-blue)
 
 # TutorialsNinja Playwright Showcase
 
