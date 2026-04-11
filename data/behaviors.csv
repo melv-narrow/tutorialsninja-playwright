@@ -1,5 +1,5 @@
 "BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
-"0","Storefront","0","Navigation","1","0","Visitors can orient themselves from the home page","0"
-"0","Storefront","0","Authentication entry points","1","0","Visitors can start account flows from the home page","0"
 "0","Storefront","0","Search","1","0","Visitors can discover products quickly","0"
 "0","Storefront","0","Cart","1","0","Visitors can begin checkout from a featured product","0"
+"0","Storefront","0","Authentication entry points","1","0","Visitors can start account flows from the home page","0"
+"0","Storefront","0","Navigation","1","0","Visitors can orient themselves from the home page","0"
