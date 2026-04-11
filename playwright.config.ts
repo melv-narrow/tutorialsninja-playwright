@@ -115,6 +115,7 @@ export default defineConfig({
   use: {
     baseURL: env.baseUrl,
     headless: env.headless,
+    ignoreHTTPSErrors: true,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
