@@ -1,0 +1,9 @@
+{
+  "ttfb": 277.5,
+  "fcp": 332,
+  "lcp": 332,
+  "cls": 0,
+  "loadTime": 320.20000000001164,
+  "domContentLoaded": 320,
+  "searchDuration": 404
+}
