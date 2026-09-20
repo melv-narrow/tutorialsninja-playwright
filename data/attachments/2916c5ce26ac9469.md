@@ -1,7 +1,0 @@
-# Page snapshot
-
-```yaml
-- generic [ref=e3]:
-  - img "Loader" [ref=e5]
-  - generic [ref=e18]: Please wait while your request is being verified...
-```
